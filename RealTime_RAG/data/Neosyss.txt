@@ -1,0 +1,16 @@
+Neosyss
+
+Neosyss is a technology-focused company that provides software
+development and digital solutions. The company works on building modern
+web applications, mobile applications, cloud-based systems, and
+enterprise software. It also focuses on improving business processes
+through technology, automation, and innovation.
+
+Neosyss encourages the use of modern software engineering practices such
+as agile development, code reviews, version control, testing, and
+continuous integration. These practices help developers create reliable
+and scalable applications.
+
+The company may also work with emerging technologies such as artificial
+intelligence, machine learning, cloud computing, and data analytics to
+solve real-world business problems.
