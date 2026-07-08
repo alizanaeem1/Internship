@@ -2,9 +2,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
 load_dotenv()
-
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 # ==========================
 # Project Paths
 # ==========================
@@ -12,6 +11,9 @@ SUPPORTED_FILES = {
     ".pdf",
     ".txt",
     ".docx",
+    ".png",
+    ".jpg",
+    ".jpeg",
 }
 
 BASE_DIR = Path(__file__).parent
@@ -39,9 +41,8 @@ COLLECTION_NAME = "documents"
 # Chunking
 # ==========================
 
-CHUNK_SIZE = 1000
-
-CHUNK_OVERLAP = 200
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 100
 
 # ==========================
 # Metadata
@@ -49,4 +50,3 @@ CHUNK_OVERLAP = 200
 
 INDEX_FILE = DB_FOLDER / "indexed_files.json"
 
-SUPPORTED_FILES = [".pdf", ".docx", ".txt"]

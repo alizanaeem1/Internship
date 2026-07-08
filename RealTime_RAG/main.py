@@ -4,8 +4,8 @@ from watcher import start_watcher
 from query import ask_question
 
 
+# First time force=True rakho
 index_folder(DATA_FOLDER)
-
 observer = start_watcher()
 
 print("\nRAG System Ready")
@@ -23,13 +23,13 @@ try:
             continue
 
         answer = ask_question(question)
-
+        
         print("\nAnswer:\n")
         print(answer)
 
 except KeyboardInterrupt:
     print("\nStopping Watcher...")
-
+    
 finally:
     observer.stop()
     observer.join()
