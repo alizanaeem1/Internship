@@ -53,14 +53,8 @@ Week-04-Advanced-RAG-with-Gemini-and-Prompt-Engineering/
 │
 ├── README.md
 ├── requirements.txt
-├── .gitignore
-├── .env.example
 │
-├── config/
-│   ├── __init__.py
-│   ├── settings.py
-│   └── prompts.py
-│
+
 ├── src/
 │   ├── __init__.py
 │   ├── gemini_client.py
@@ -80,9 +74,7 @@ Week-04-Advanced-RAG-with-Gemini-and-Prompt-Engineering/
 
 ## Module Description
 
-### config/
 
-Contains project configuration, environment settings, and reusable prompt templates.
 
 ### gemini_client.py
 
