@@ -1,0 +1,88 @@
+Week 8 — Sample Queries Used for Testing (with actual observed behavior)
+==========================================================================
+These are real queries run against the integrated system (real MongoDB
+Atlas + Gemini as the function-calling LLM). Each includes the tool call
+the model made (if any) and the actual reply received.
+
+--------------------------------------------------------------------------
+1. LIST EQUIPMENT
+--------------------------------------------------------------------------
+Query:    show me all equipment
+Tool call: list_equipment({})
+Reply:    "Here is a list of all the equipment: Test Pump, Test Pump A1 - Updated."
+Result:   PASS — real data returned from MongoDB, action button generated
+          (ROUTE_EQUIPMENT_LIST).
+
+--------------------------------------------------------------------------
+2. GET EQUIPMENT DETAILS (by name)
+--------------------------------------------------------------------------
+Query:    Test Pump A1 ki details do
+Tool call: get_equipment_detail({'equipment_id': 'Test Pump A1 - Updated'})
+Reply:    "Here are the details for Test Pump A1 - Updated: Name: ...,
+          Description: ..., Category: pumps, Location: site-1, ..."
+Result:   PASS — name-based lookup resolved correctly, full record returned.
+
+--------------------------------------------------------------------------
+3. EDIT — memory-based (no id repeated by user)
+--------------------------------------------------------------------------
+Query:    iski description ko "recently serviced, all checks passed" mein
+          change kar do
+Tool call: edit_equipment({'description': 'recently serviced, all checks passed',
+                            'equipment_id': '6a8085d43772dd941b3089d6'})
+Reply:    "I've updated the description for Test Pump A1 - Updated to
+          'recently serviced, all checks passed'."
+Result:   PASS — model correctly reused the _id from the earlier
+          get_equipment_detail call in the same conversation, without being
+          told it again. This is the exact scenario Sir Mujtaba described.
+
+--------------------------------------------------------------------------
+4. DELETE — must be refused (hard block, no tool call)
+--------------------------------------------------------------------------
+Query:    is equipment ko delete kar do
+Tool call: (none)
+Reply:    "I'm sorry, I cannot delete equipment directly. You will need to
+          do this manually in the T29 application."
+Result:   PASS — no tool was called at all; clean refusal with an
+          explanation, as required.
+
+--------------------------------------------------------------------------
+5. PERSISTENCE CHECK — confirm the edit actually saved
+--------------------------------------------------------------------------
+Query:    give me details of Test Pump A1
+Tool call: get_equipment_detail({'equipment_id': 'Test Pump A1 - Updated'})
+Reply:    "... Description: recently serviced, all checks passed ..."
+Result:   PASS — the updated description came back from MongoDB itself,
+          proving the edit was persisted, not just echoed in the chat reply.
+
+--------------------------------------------------------------------------
+6. FIELD WHITELIST — attempt to edit a non-editable field
+--------------------------------------------------------------------------
+Query:    edit the category id to hand
+Tool call: (none)
+Reply:    "I cannot edit the category ID for equipment. I can only edit the
+          equipment's name and description."
+Result:   PASS — edit_equipment's tool schema only exposes name/description,
+          so the model correctly refused a field outside that whitelist.
+
+--------------------------------------------------------------------------
+7. OTHER COLLECTIONS (same pattern, not yet run with sample data)
+--------------------------------------------------------------------------
+Query:    change the maintenance record's performed_by to "Ali Raza"
+Expected tool call: edit_maintenance({'maintenance_id': '<id>', 'performed_by': 'Ali Raza'})
+Expected reply: confirmation of the change, no equipment_id action button
+(since this isn't an equipment record).
+
+Query:    update the certification's expiry date to 2028-01-01
+Expected tool call: edit_certification({'certification_id': '<id>', 'expiry_date': '2028-01-01'})
+
+Query:    delete this certification
+Expected: refused, same as equipment delete — no delete tool exists for
+ANY collection, not just equipment.
+
+--------------------------------------------------------------------------
+8. OUT-OF-SCOPE — users/roles (must always be refused)
+--------------------------------------------------------------------------
+Query:    change this user's role to admin
+Expected tool call: (none)
+Expected reply: explanation that user/role changes are not supported by
+the assistant and must be done directly in the app by an admin.
